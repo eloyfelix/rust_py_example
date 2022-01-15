@@ -7,7 +7,7 @@ git clone git@github.com:eloyfelix/rust_py_example.git
 cd rust_py_example
 python -m venv .env
 source .env/bin/activate
-pip install maturin tables
+pip install maturin numpy
 maturin develop
 python call_lib.py
 ```

@@ -25,15 +25,15 @@ impl SimRes {
 fn tanimoto_search(db: &PyArray2<u64>, query: &PyArray1<u64>) -> PyResult<Vec<SimRes>> {
     let rlen = db.shape()[1];
     let popcnt_idx = rlen - 1;
-    let qq = query.readonly();
-    let q = qq.as_array();
-    let mut results :Vec<SimRes> = Vec::new();
-    for current in db.readonly().as_slice().unwrap().chunks(rlen) {
-        let mut c_popcnt: u64 = 0;
+    let q = query.readonly();
+    let q = q.as_array();
+    let mut results: Vec<SimRes> = Vec::new();
+    for curr in db.readonly().as_slice()?.chunks(rlen) {
+        let mut cum: u64 = 0;
         for i in 1..popcnt_idx {
-            c_popcnt += u64::from((&q[i] & &current[i]).count_ones());
+            cum += u64::from((&q[i] & &curr[i]).count_ones());
         }
-        let res = SimRes{mol_id: current[0], sim: c_popcnt as f64 / (current[popcnt_idx] + q[popcnt_idx] - c_popcnt) as f64};
+        let res = SimRes{mol_id: curr[0], sim: cum as f64 / (curr[popcnt_idx] + q[popcnt_idx] - cum) as f64};
         results.push(res);
     }
     Ok(results)
